@@ -25,14 +25,14 @@ if($xml ===  FALSE) {
         $array = [];
 
         $array[] = $product->Product_URL;
-        $array[] = $product->Name;
-        $array[] = "\"" . $product->Description . "\"";
+        $array[] = str_replace('"', "''", $product->Product_Name);
+        $array[] = "\"" . html_entity_decode(str_replace("\"", "\"\"", $product->Description)) . "\"";
         $array[] = "BigCommerce"; // $product->Brand;
-        $array[] = $product->Item_Type;
-        $array[] = $product->tags;
-        $array[] = "FALSE"; // $product->published;
-        $array[] = $product->option1_name;
-        $array[] = $product->option1_value;
+        $array[] = $product->Category_Details->item->Category_Name;
+        $array[] = "BigCommerce"; // tags
+        $array[] = "TRUE"; // $product->published;
+        $array[] = "Title"; // $product->option1_name;
+        $array[] = "Default Title"; // $product->option1_value;
         $array[] = $product->option2_name;
         $array[] = $product->option2_value;
         $array[] = $product->option3_name;
@@ -67,13 +67,29 @@ if($xml ===  FALSE) {
         $array[] = $product->google_shopping_custom_label_3;
         $array[] = $product->google_shopping_custom_label_4;
         $array[] = $product->variant_image;
-        $array[] = $product->variant_weight_unit;
+        $array[] = "lb"; // $product->variant_weight_unit;
 
+        // Iterate through the array and append each item to the csv variable
         foreach ($array as $product_csv) {
-            $csv .= $product_csv . ", ";
+            $csv .= $product_csv . ",";
         }
         $csv .= "\r\n";
 
+        // Add new lines for additional images
+        foreach ($product->Product_Images->item as $image) {
+            $producthandle = $product->Product_URL;
+            $producttitle = str_replace('"', "''", $product->Product_Name);
+            $imgurl = $image->Product_Image_URL;
+            $csv .= "$producthandle,,,,,,,,,,,,,,,,,,,,,,,,$imgurl,,,,,,,,,,,,,,,,,,,,\r\n";
+        }
+
+
+    }
+
+    $f = fopen('shopify.csv', 'w');
+    $fwrite = fwrite($f, $csv);
+    if ($fwrite === false) {
+        echo "ERROR!";
     }
 
     echo $csv;
