@@ -1,7 +1,7 @@
 <?php
 error_reporting(-1);
 
-require_once ("config.php");
+require("config.php");
 
 $xml = simplexml_load_file($config_xml_file,"SimpleXMLElement",LIBXML_NOCDATA);
 

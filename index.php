@@ -9,7 +9,7 @@
 </head>
 <body>
 <pre>
-<?php include_once("parser.php"); ?>
+<?php include("parser.php"); ?>
 </pre>
 </body>
 </html>
